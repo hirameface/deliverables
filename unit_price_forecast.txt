@@ -1,0 +1,27 @@
+import pandas as pd
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import matplotlib.pyplot as plt
+
+# 過去のデータをリストに入れる
+data_past = [
+]
+
+# 過去のデータを DataFrame に変換
+dates = pd.date_range(start='2018-01-01', periods=len(data_past), freq='M')
+df_past = pd.DataFrame(data_past, index=dates, columns=['Price'])
+
+# SARIMA パラメーターを設定
+order = (1, 1, 0)
+seasonal_order = (1, 1, 1, 12)
+
+# SARIMA モデルを適合
+model = SARIMAX(df_past, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False)
+model_fit = model.fit(disp=0)
+
+# 来季の単価を予測
+forecast = model_fit.forecast(steps=1)
+print("来季の単価の予測値:", forecast.values[0])
+
+# 予測結果をプロット
+model_fit.plot_diagnostics(figsize=(6, 12))
+plt.show()
